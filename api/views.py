@@ -14,9 +14,18 @@ class CreateResearchView(generics.ListCreateAPIView):
         user = self.request.user
         return Research.objects.filter(authors__user=user)
 
+
     def perform_create(self, serializer):
         research = serializer.save()
         Authors.objects.create(research=research, user=self.request.user)
+
+
+class ListResearch(generics.ListAPIView):
+    serializer_class = ResearchSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Research.objects.all()
 
 
 class DeleteResearchView(generics.DestroyAPIView):
